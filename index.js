@@ -23,7 +23,7 @@ app.get('/db', async (req, res) => {
     const result = await client.query('SELECT * FROM blightsources');
     const results = { 'results': result ? result.rows : null };
 
-    res.send(JSON.parse(results));
+    res.send(results);
     console.log(results);
 
     client.release();
