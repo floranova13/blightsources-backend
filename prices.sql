@@ -1,6 +1,7 @@
-DROP TABLE IF EXISTS blightsources;
+DROP TABLE IF EXISTS prices;
+DROP TYPE IF EXISTS FLUX;
 
-CREATE TYPE FLUX IF NOT EXISTS AS ENUM ('volatile', 'fluid', 'stable', 'fixed');
+CREATE TYPE FLUX AS ENUM ('volatile', 'fluid', 'stable', 'fixed');
 
 CREATE TABLE prices(
   blightsource_id SERIAL REFERENCES blightsources (id),
@@ -11,14 +12,14 @@ CREATE TABLE prices(
 
 WITH ins (name, base_price, price_history, volatility) AS
 ( VALUES
-  ( 'forslone', 9, [], 'stable'),
-  ( 'erecombe', 495, [], 'stable'),
-  ( 'voidshimmer', 711, [], 'stable')
+  ( 'forslone', 9, ARRAY [1], 'stable'),
+  ( 'erecombe', 495, ARRAY [1], 'stable'),
+  ( 'voidshimmer', 711, ARRAY [1], 'stable')
 )  
 INSERT INTO prices
   (blightsource_id, base_price, price_history, volatility) 
 SELECT 
-  blightsources.id, ins.base_price, ins.price_history, ins.volatility
+  blightsources.id, ins.base_price, ins.price_history, FLUX(ins.volatility)
 FROM 
   blightsources JOIN ins
     ON ins.name = blightsources.name;

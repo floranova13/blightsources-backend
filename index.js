@@ -2,6 +2,11 @@ const express = require('express');
 const path = require('path');
 const PORT = process.env.PORT || 5000;
 const app = express();
+const routes = require('./src/routes')
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json());
 
 const { Pool } = require('pg');
 const pool = new Pool({
@@ -17,6 +22,9 @@ app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
+
+app.use('/api', routes);
+
 app.get('/db', async (req, res) => {
   try {
     const client = await pool.connect();
@@ -24,8 +32,6 @@ app.get('/db', async (req, res) => {
     const results = { 'results': result ? result.rows : null };
 
     res.send(results);
-    console.log(results);
-
     client.release();
   } catch (err) {
     console.error(err);
@@ -34,3 +40,9 @@ app.get('/db', async (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+module.exports = {
+  query: (text, params, callback) => {
+    return pool.query(text, params, callback)
+  },
+}
