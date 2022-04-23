@@ -4,15 +4,15 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   const sql = 'SELECT * FROM subcategories;';
-  const data = await query(sql);
-  res.send(data);
+  const { rows } = await query(sql);
+  res.send(rows);
 });
 
 router.get('/:name', async (req, res) => {
   const { name } = req.params;
   const sql = 'SELECT * FROM subcategories s WHERE s.name = $1;';
-  const data = await query(sql, [name]);
-  res.send(data);
+  const { rows } = await query(sql, [name]);
+  res.send(rows);
 });
 
 router.post('/', async (req, res) => { // eventually add the ability to input a description

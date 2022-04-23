@@ -3,16 +3,21 @@ const { query } = require('../db');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  const sql = 'SELECT * FROM blightsources;';
-  const data = await query(sql);
-  res.send(data);
+  const sql = 'SELECT b.id, b.name, c.name, s.name FROM blightsources b, subcategories s, categories c WHERE b.subcategory_id = s.id AND b.category_id = c.id;';
+  const { rows } = await query(sql);
+
+  // const blightsourcesArr = rows.map(row => {
+  //   const { name } = row;
+  // })
+
+  res.send(rows);
 });
 
 router.get('/:name', async (req, res) => {
   const { name } = req.params;
   const sql = 'SELECT * FROM blightsources WHERE blightsources.name = $1;';
-  const data = await query(sql, [name]);
-  res.send(data);
+  const { rows } = await query(sql, [name]);
+  res.send(rows);
 });
 
 router.post('/', async (req, res) => {

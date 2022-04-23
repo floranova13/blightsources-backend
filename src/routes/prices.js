@@ -4,15 +4,15 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   const sql = 'SELECT * FROM prices;';
-  const data = await query(sql);
-  res.send(data);
+  const { rows } = await query(sql);
+  res.send(rows);
 });
 
 router.get('/:name', async (req, res) => {
   const { name } = req.params;
   const sql = 'SELECT * FROM prices WHERE blightsource_id IN (SELECT id FROM blightsources b WHERE b.name = $1);';
-  const data = await query(sql, [name]);
-  res.send(data);
+  const { rows } = await query(sql, [name]);
+  res.send(rows);
 });
 
 router.post('/', async (req, res) => {
